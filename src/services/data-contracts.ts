@@ -10,20 +10,12 @@
  */
 
 export interface StatisticsModel {
-  /** @format guid */
+  /** @format uuid */
   id?: string;
-  userName?: string;
+  userName?: string | null;
 
   /** @format date-time */
   createdAt?: string;
-  clientVersion?: string;
-  osName?: string;
-}
-
-export interface StatisticsContract {
-  /** @format guid */
-  id?: string;
-  userName?: string;
-  clientVersion?: string;
-  osName?: string;
+  clientVersion?: string | null;
+  osName?: string | null;
 }

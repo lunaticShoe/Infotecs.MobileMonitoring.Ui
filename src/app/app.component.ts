@@ -24,17 +24,17 @@ export class AppComponent implements OnInit {
     const statistics = new Statistics({
       baseUrl: 'http://localhost:5136'
     })
-    const resultItems = await statistics.statisticsGetList();
+    const resultItems = await statistics.listList();
     this.statisticsItems = resultItems.data;
   }
-  getDisplayDate(dateText?: string) {
-    if (!!dateText) return ''
+  getDisplayDate(dateText: any) {
+    if (dateText === undefined || !dateText) return ''
     
     const zeroPad = (num: number, places: number) => 
       String(num).padStart(places, '0')
 
-    const resultDate = new Date(dateText!)
-    return `${zeroPad(resultDate.getDate(), 2)}.${zeroPad(resultDate.getMonth() + 1, 2)}.${resultDate.getFullYear()} ` // дата
-    + `${zeroPad(resultDate.getHours(), 2)}:${zeroPad(resultDate.getMinutes(), 2)}:${zeroPad(resultDate.getSeconds(), 2)}` // время
+    const date1 = new Date(dateText)
+    return `${zeroPad(date1.getDate(), 2)}.${zeroPad(date1.getMonth() + 1, 2)}.${date1.getFullYear()} ` // дата
+    + `${zeroPad(date1.getHours(), 2)}:${zeroPad(date1.getMinutes(), 2)}:${zeroPad(date1.getSeconds(), 2)}` // время
   }
 }

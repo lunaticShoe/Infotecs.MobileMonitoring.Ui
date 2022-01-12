@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { StatisticsContract, StatisticsModel } from "./data-contracts";
+import { StatisticsModel } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Statistics<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -17,10 +17,10 @@ export class Statistics<SecurityDataType = unknown> extends HttpClient<SecurityD
    * No description
    *
    * @tags Statistics
-   * @name StatisticsGetList
+   * @name ListList
    * @request GET:/statistics/list
    */
-  statisticsGetList = (params: RequestParams = {}) =>
+  listList = (params: RequestParams = {}) =>
     this.request<StatisticsModel[], any>({
       path: `/statistics/list`,
       method: "GET",
@@ -31,27 +31,12 @@ export class Statistics<SecurityDataType = unknown> extends HttpClient<SecurityD
    * No description
    *
    * @tags Statistics
-   * @name StatisticsCreate
+   * @name CreateUpdate
    * @request PUT:/statistics/create
    */
-  statisticsCreate = (data: StatisticsContract, params: RequestParams = {}) =>
-    this.request<File, any>({
+  createUpdate = (data: StatisticsModel, params: RequestParams = {}) =>
+    this.request<void, any>({
       path: `/statistics/create`,
-      method: "PUT",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Statistics
-   * @name StatisticsUpdate
-   * @request PUT:/statistics/update
-   */
-  statisticsUpdate = (data: StatisticsContract, params: RequestParams = {}) =>
-    this.request<File, any>({
-      path: `/statistics/update`,
       method: "PUT",
       body: data,
       type: ContentType.Json,
