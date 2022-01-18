@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
     const statistics = new Statistics({
       baseUrl: 'http://localhost:5136'
     })
-    const resultItems = await statistics.listList();
+    const resultItems = await statistics.statisticsGetList();
     this.statisticsItems = resultItems.data;
   }
   getDisplayDate(dateText: any) {
