@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventContract, StatisticsModel } from 'src/services/data-contracts';
 import { Events } from 'src/services/Events';
+import { EventService } from 'src/services/EventService';
 import { Statistics } from 'src/services/Statistics';
+import { StatisticsService } from 'src/services/StatisticsService';
 
 @Component({
   selector: 'app-event-list',
@@ -15,7 +17,9 @@ export class EventListComponent implements OnInit {
   statistics : StatisticsModel = {};
 
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router,
+    private eventService: EventService,
+    private statisticsService : StatisticsService) { }
 
   async ngOnInit() {
     this.route.params.subscribe(_ => {
@@ -23,19 +27,12 @@ export class EventListComponent implements OnInit {
     }); 
   }
 
-  async loadData() {
-    const events = new Events({
-      baseUrl: 'http://localhost:5136'
-    });
-    const statistics = new Statistics({
-      baseUrl: 'http://localhost:5136'
-    });
-    
+  async loadData() {   
     this.id = this.route.snapshot.paramMap.get('id')!;
 
-    const statResult = await statistics.statisticsGet(this.id);
+    const statResult = await this.statisticsService.statisticsGet(this.id);
     this.statistics = statResult.data;
-    const eventsResult = await events.eventsGetList(this.id);
+    const eventsResult = await this.eventService.eventsGetList(this.id);
     this.events = eventsResult.data;
   }
 
