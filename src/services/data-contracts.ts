@@ -9,13 +9,29 @@
  * ---------------------------------------------------------------
  */
 
-export interface StatisticsModel {
-  /** @format uuid */
-  id?: string;
-  userName?: string | null;
+export interface EventContract {
+  name?: string;
 
   /** @format date-time */
   createdAt?: string;
-  clientVersion?: string | null;
-  osName?: string | null;
+}
+
+export interface StatisticsModel {
+  /** @format guid */
+  id?: string;
+  userName?: string;
+
+  /** @format date-time */
+  createdAt?: string;
+  clientVersion?: string;
+  osName?: string;
+}
+
+export interface StatisticsContract {
+  /** @format guid */
+  id?: string;
+  userName?: string;
+  clientVersion?: string;
+  osName?: string;
+  events?: EventContract[];
 }

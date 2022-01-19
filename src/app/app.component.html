@@ -1,42 +1,46 @@
-<div class="table">
-  <div class="tr th">
-    <div class="td">
-      ID
+<div class="main-container">
+    <div class="left-container">
+        <div class="table">
+            <div class="tr th">
+                <div class="td grow-column">
+                    ID
+                </div>
+                <div class="td">
+                    Пользователь
+                </div>
+                <div class="td">
+                    ОС
+                </div>
+                <div class="td">
+                    Версия клиента
+                </div>
+                <div class="td">
+                    Создан
+                </div>
+            </div>
+            <div class="tr" *ngFor='let statistics of statisticsItems;'>
+                <div class="td grow-column">
+                    <span>
+                        <a [routerLink]="[statistics.id]">{{statistics.id}}</a>
+                    </span>
+                </div>
+                <div class="td">
+                    <span>{{statistics.userName}}</span>
+                </div>
+                <div class="td">
+                    <span>{{statistics.osName}}</span>
+                </div>
+                <div class="td">
+                    <span>{{statistics.clientVersion}}</span>
+                </div>
+                <div class="td">
+                    <span>{{getDisplayDate(statistics.createdAt)}}</span>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <div class="td"
-      style="flex-grow: 2;">
-      Пользователь
+    <div class="right-container">
+        <router-outlet></router-outlet>
     </div>
-    <div class="td">
-      ОС
-    </div>
-    <div class="td">
-      Версия клиента
-    </div>    
-    <div class="td">
-      Создан
-    </div>
-  </div>
-  <div class="tr" *ngFor='let statistics of statisticsItems;'>
-    <div class="td"
-      style="justify-content: center;">
-      <span>{{statistics.id}}</span>
-    </div>
-    <div class="td"
-      style="justify-content: center; flex-grow: 2;">
-      <span>{{statistics.userName}}</span>
-    </div>    
-    <div class="td"
-      style="justify-content: center;">
-      <span>{{statistics.osName}}</span>
-    </div>
-    <div class="td"
-      style="justify-content: center;">
-      <span>{{statistics.clientVersion}}</span>
-    </div>
-    <div class="td"
-      style="justify-content: center;">
-      <span>{{getDisplayDate(statistics.createdAt)}}</span>
-    </div>
-  </div>
-<router-outlet></router-outlet>
+</div>

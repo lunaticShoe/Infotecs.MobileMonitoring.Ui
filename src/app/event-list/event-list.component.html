@@ -1,0 +1,34 @@
+<div>
+    <div class="container-main">
+    <h3>{{statistics.userName}}</h3>
+    <div class="stat-info-container">
+        <div class="stat-info">
+            <div class="stat-record-text">Идентификатор</div>
+            <div class="stat-record-data">{{statistics.id}}</div>
+        </div>
+        <div class="stat-info">
+            <div class="stat-record-text">Версия ПО</div>
+            <div class="stat-record-data">{{statistics.clientVersion}}</div>
+        </div>
+    </div>
+    <h4>События</h4>
+    </div>
+    <div class="table">
+        <div class="tr th">
+            <div class="td">
+                Дата
+            </div>
+            <div class="td grow-column">
+                Событие
+            </div>       
+        </div>
+        <div class="tr" *ngFor='let event of events;'>
+            <div class="td" >
+                <span>{{getDisplayDate(event.createdAt)}}</span>
+            </div>
+            <div class="td grow-column">
+                <span>{{event.name}}</span>
+            </div>        
+        </div>
+    </div>
+</div>

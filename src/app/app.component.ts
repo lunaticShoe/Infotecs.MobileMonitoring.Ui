@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StatisticsModel } from '../services/data-contracts'
 import { Statistics } from '../services/Statistics'
+import { StatisticsService } from 'src/services/StatisticsService';
 
 @Component({
   selector: 'app-root',
@@ -20,11 +21,14 @@ export class AppComponent implements OnInit {
   // ];
   statisticsItems = new Array<StatisticsModel>();
 
+  constructor(private statisticsService : StatisticsService) {
+    
+    
+  }
+
   async ngOnInit() {
-    const statistics = new Statistics({
-      baseUrl: 'http://localhost:5136'
-    })
-    const resultItems = await statistics.listList();
+    
+    const resultItems = await this.statisticsService.statisticsGetList();
     this.statisticsItems = resultItems.data;
   }
   getDisplayDate(dateText: any) {
