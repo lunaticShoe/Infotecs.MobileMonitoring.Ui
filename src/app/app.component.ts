@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatisticsModel } from '../services/data-contracts'
 import { Statistics } from '../services/Statistics'
 import { StatisticsService } from 'src/services/StatisticsService';
-import { interval, Subscription } from 'rxjs';
+import { from, interval, Subject, Subscription } from 'rxjs';
+import { takeUntil, filter, map, switchMap, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less']
 })
-export class AppComponent implements OnInit {  
+export class AppComponent implements OnInit, OnDestroy {  
   title = 'Infotecs.MobileMonitoring.Ui';
   // statisticsItems : [StatisticsModel] = [
   //   {
@@ -21,16 +22,26 @@ export class AppComponent implements OnInit {
   //   }
   // ];
   statisticsItems = new Array<StatisticsModel>();
-  autoUpdateSubscription! : Subscription;
+  isAutoUpdating = false;
+  //autoUpdateSubscription! : Subscription;
+  autoUpdate$!: Subject<boolean>;
 
 
   constructor(private statisticsService : StatisticsService) {
     
     
   }
+  ngOnDestroy() {
+    this.autoUpdate$.unsubscribe();
+  }
 
   async ngOnInit() {    
     await this.GetData();
+    
+    //this.autoUpdate$
+    // interval(30 * 1000)
+             
+    //   .subscribe(async () => await this.GetData());
   }
   
   private async GetData() {
@@ -49,21 +60,27 @@ export class AppComponent implements OnInit {
     return `${zeroPad(date1.getDate(), 2)}.${zeroPad(date1.getMonth() + 1, 2)}.${date1.getFullYear()} ` // дата
     + `${zeroPad(date1.getHours(), 2)}:${zeroPad(date1.getMinutes(), 2)}:${zeroPad(date1.getSeconds(), 2)}` // время
   }
-
   autoUpdateChanged(changed: any) {
-    console.debug(changed.target.checked)
-    
-    if (!changed.target.checked) {
-      this.autoUpdateSubscription?.unsubscribe();
-      return;
-    }
+    //this.autoUpdate$.next(changed.target.checked)
 
-    this.autoUpdateSubscription = 
-      interval(500)
-        .subscribe(async () => {
-          await this.GetData();
-        })
+    
   }
+
+  
+  // autoUpdateChanged(changed: any) {
+  //   console.debug(changed.target.checked)
+    
+  //   if (!changed.target.checked) {
+  //     this.autoUpdateSubscription?.unsubscribe();
+  //     return;
+  //   }
+
+  //   this.autoUpdateSubscription = 
+  //     interval(500)
+  //       .subscribe(async () => {
+  //         await this.GetData();
+  //       })
+  // }
 
   trackByFn(index : any, item : StatisticsModel) {
     return item.id;

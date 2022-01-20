@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { EventContract, StatisticsModel } from 'src/services/data-contracts';
 import { Events } from 'src/services/Events';
 import { EventService } from 'src/services/EventService';
@@ -16,7 +16,7 @@ export class EventListComponent implements OnInit, OnDestroy {
   id: string = "";
   events = new Array<EventContract>();
   statistics : StatisticsModel = {};
-  routeUpdate! : Subscription;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute, private router: Router,
     private eventService: EventService,
@@ -24,15 +24,18 @@ export class EventListComponent implements OnInit, OnDestroy {
     
 
   ngOnInit() {    
-    this.routeUpdate = this.route.params.subscribe(async () => {      
-      await this.loadData();
-    }); 
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(async () => {
+        await this.loadData();
+      }); 
     console.debug("subscribed")
   }
 
 
   ngOnDestroy() {
-    this.routeUpdate.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
     console.debug("unsubscribed")
   }
 

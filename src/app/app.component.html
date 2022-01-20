@@ -1,7 +1,7 @@
 <div class="main-container">
     <div class="left-container">
         <div>
-          <input (change)="autoUpdateChanged($event)" type="checkbox" id="auto-update-toggle">
+          <input (checked)="isAutoUpdating" (change)="autoUpdateChanged($event)" type="checkbox" id="auto-update-toggle">
           <label for="auto-update-toggle"> Авто-обновление</label>
         </div>
         <div class="table">
