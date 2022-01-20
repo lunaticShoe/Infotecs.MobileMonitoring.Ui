@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { EventContract, StatisticsModel } from 'src/services/data-contracts';
 import { Events } from 'src/services/Events';
 import { EventService } from 'src/services/EventService';
@@ -11,20 +12,28 @@ import { StatisticsService } from 'src/services/StatisticsService';
   templateUrl: './event-list.component.html',
   styleUrls: ['./event-list.component.less']
 })
-export class EventListComponent implements OnInit {
+export class EventListComponent implements OnInit, OnDestroy {
   id: string = "";
   events = new Array<EventContract>();
   statistics : StatisticsModel = {};
-
+  routeUpdate! : Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router,
     private eventService: EventService,
     private statisticsService : StatisticsService) { }
+    
 
-  async ngOnInit() {
-    this.route.params.subscribe(_ => {
-      this.loadData();
+  ngOnInit() {    
+    this.routeUpdate = this.route.params.subscribe(async () => {      
+      await this.loadData();
     }); 
+    console.debug("subscribed")
+  }
+
+
+  ngOnDestroy() {
+    this.routeUpdate.unsubscribe();
+    console.debug("unsubscribed")
   }
 
   async loadData() {   
