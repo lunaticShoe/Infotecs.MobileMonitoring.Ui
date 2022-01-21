@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { combineLatest, Observable, Subject, switchMap, takeUntil, tap,map } from 'rxjs';
 import { EventContract, StatisticsModel } from 'src/services/data-contracts';
-import { Events } from 'src/services/Events';
 import { EventService } from 'src/services/EventService';
-import { Statistics } from 'src/services/Statistics';
 import { StatisticsService } from 'src/services/StatisticsService';
 
 @Component({
@@ -25,27 +23,28 @@ export class EventListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {    
     this.route.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(async () => {
-        await this.loadData();
-      }); 
+      .pipe(
+        switchMap(x => this.loadData(x['id'])),
+        takeUntil(this.destroy$))
+        .subscribe(); 
     console.debug("subscribed")
   }
 
 
   ngOnDestroy() {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
     console.debug("unsubscribed")
   }
 
-  async loadData() {   
-    this.id = this.route.snapshot.paramMap.get('id')!;
-
-    const statResult = await this.statisticsService.statisticsGet(this.id);
-    this.statistics = statResult.data;
-    const eventsResult = await this.eventService.eventsGetList(this.id);
-    this.events = eventsResult.data;
+  loadData(id: string) : Observable<void> {   
+    return combineLatest([this.statisticsService.statisticsGet(id), this.eventService.eventsGetList(id)])
+      .pipe(
+        tap(([statRes, eventRes]) => {
+          this.statistics = statRes.data;
+          this.events = eventRes.data;
+        }),
+        map(() => { }));
   }
 
 

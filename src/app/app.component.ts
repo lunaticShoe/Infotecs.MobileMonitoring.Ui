@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatisticsModel } from '../services/data-contracts'
-import { Statistics } from '../services/Statistics'
 import { StatisticsService } from 'src/services/StatisticsService';
-import { from, interval, Subject, Subscription } from 'rxjs';
-import { takeUntil, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { interval, of, Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,36 +11,26 @@ import { takeUntil, filter, map, switchMap, take, tap } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit, OnDestroy {  
   title = 'Infotecs.MobileMonitoring.Ui';
-  // statisticsItems : [StatisticsModel] = [
-  //   {
-  //     id: "d16f805b-6c6e-4397-a8e2-519278c52356",
-  //     userName: "Richards Baxter",
-  //     clientVersion: "3.3.2.35640",
-  //     osName: "Windows",
-  //     createdAt: "2022-01-11T18:04:33.7598520+03:00"
-  //   }
-  // ];
   statisticsItems = new Array<StatisticsModel>();
-  isAutoUpdating = false;
-  //autoUpdateSubscription! : Subscription;
-  autoUpdate$!: Subject<boolean>;
+  autoUpdate$ = new Subject<boolean>();
 
+  constructor(private statisticsService : StatisticsService) { }
 
-  constructor(private statisticsService : StatisticsService) {
-    
-    
-  }
   ngOnDestroy() {
-    this.autoUpdate$.unsubscribe();
+    this.autoUpdate$.complete()
   }
 
   async ngOnInit() {    
     await this.GetData();
-    
-    //this.autoUpdate$
-    // interval(30 * 1000)
-             
-    //   .subscribe(async () => await this.GetData());
+    this.autoUpdate$
+      .pipe(
+        switchMap(x => !!x
+          ? interval(1000)
+            .pipe(
+              switchMap(x => this.GetData())
+            ) : of())
+      )
+      .subscribe()
   }
   
   private async GetData() {
@@ -61,26 +50,9 @@ export class AppComponent implements OnInit, OnDestroy {
     + `${zeroPad(date1.getHours(), 2)}:${zeroPad(date1.getMinutes(), 2)}:${zeroPad(date1.getSeconds(), 2)}` // время
   }
   autoUpdateChanged(changed: any) {
-    //this.autoUpdate$.next(changed.target.checked)
-
-    
+    this.autoUpdate$.next(changed.target.checked)
+    console.debug("autoUpdateChanged", changed.target.checked)
   }
-
-  
-  // autoUpdateChanged(changed: any) {
-  //   console.debug(changed.target.checked)
-    
-  //   if (!changed.target.checked) {
-  //     this.autoUpdateSubscription?.unsubscribe();
-  //     return;
-  //   }
-
-  //   this.autoUpdateSubscription = 
-  //     interval(500)
-  //       .subscribe(async () => {
-  //         await this.GetData();
-  //       })
-  // }
 
   trackByFn(index : any, item : StatisticsModel) {
     return item.id;
