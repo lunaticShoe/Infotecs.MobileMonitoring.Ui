@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable, Subject, switchMap, takeUntil, tap,map } from 'rxjs';
 import { EventContract, StatisticsModel } from 'src/services/data-contracts';
-import { Events } from 'src/services/Events';
 import { EventService } from 'src/services/EventService';
-import { Statistics } from 'src/services/Statistics';
 import { StatisticsService } from 'src/services/StatisticsService';
 
 @Component({
@@ -11,29 +10,41 @@ import { StatisticsService } from 'src/services/StatisticsService';
   templateUrl: './event-list.component.html',
   styleUrls: ['./event-list.component.less']
 })
-export class EventListComponent implements OnInit {
+export class EventListComponent implements OnInit, OnDestroy {
   id: string = "";
   events = new Array<EventContract>();
   statistics : StatisticsModel = {};
-
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute, private router: Router,
     private eventService: EventService,
     private statisticsService : StatisticsService) { }
+    
 
-  async ngOnInit() {
-    this.route.params.subscribe(_ => {
-      this.loadData();
-    }); 
+  ngOnInit() {    
+    this.route.params
+      .pipe(
+        switchMap(x => this.loadData(x['id'])),
+        takeUntil(this.destroy$))
+        .subscribe(); 
+    console.debug("subscribed")
   }
 
-  async loadData() {   
-    this.id = this.route.snapshot.paramMap.get('id')!;
 
-    const statResult = await this.statisticsService.statisticsGet(this.id);
-    this.statistics = statResult.data;
-    const eventsResult = await this.eventService.eventsGetList(this.id);
-    this.events = eventsResult.data;
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    console.debug("unsubscribed")
+  }
+
+  loadData(id: string) : Observable<void> {   
+    return combineLatest([this.statisticsService.statisticsGet(id), this.eventService.eventsGetList(id)])
+      .pipe(
+        tap(([statRes, eventRes]) => {
+          this.statistics = statRes.data;
+          this.events = eventRes.data;
+        }),
+        map(() => { }));
   }
 
 

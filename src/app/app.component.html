@@ -1,5 +1,9 @@
 <div class="main-container">
     <div class="left-container">
+        <div>
+          <input (change)="autoUpdateChanged($event)" type="checkbox" id="auto-update-toggle">
+          <label for="auto-update-toggle"> Авто-обновление</label>
+        </div>
         <div class="table">
             <div class="tr th">
                 <div class="td grow-column">
@@ -18,7 +22,7 @@
                     Создан
                 </div>
             </div>
-            <div class="tr" *ngFor='let statistics of statisticsItems;'>
+            <div class="tr" *ngFor='let statistics of statisticsItems; trackBy: trackByFn'>            
                 <div class="td grow-column">
                     <span>
                         <a [routerLink]="[statistics.id]">{{statistics.id}}</a>
